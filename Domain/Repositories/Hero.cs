@@ -23,6 +23,6 @@ namespace Game.Domain.Repositories
             Category = null;
         }
 
-        
+
     }
 }

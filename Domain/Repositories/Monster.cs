@@ -10,7 +10,7 @@ namespace Game.Domain.Repositories
     {
         public int HealthPoints { get; set; }
         public int Experience { get; set; }
-        public int Damage { get; set; } 
+        public int Damage { get; set; }
         public string Category { get; set; }
 
         public Monster()
@@ -20,4 +20,3 @@ namespace Game.Domain.Repositories
 
     }
 }
-   
