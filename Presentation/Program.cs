@@ -11,46 +11,18 @@ while (string.IsNullOrWhiteSpace(chosenHeroName))
     chosenHeroName = Console.ReadLine();
 }
 
-int? chosenHeroCategory;
-Hero newHero = null;
-do
-{
-    Console.Write("Odaberite kategoriju heroja! \n" +
-            " '1' za Gladiatora \n" +
-            " '2' za Enchantera \n" +
-            " '3' za Marksmana \n");
-    chosenHeroCategory = InputInt(Console.ReadLine());
-
-    switch (chosenHeroCategory)
-    {
-        case 1:
-            Console.WriteLine("Odabrali ste Gladiatora!");
-            newHero = new Gladiator(chosenHeroName);
-            break;
-        case 2:
-            Console.WriteLine("Odabrali ste Enchantera!");
-            newHero = new Enchanter(chosenHeroName);
-            break;
-        case 3:
-            Console.WriteLine("Odabrali ste Marksmana!");
-            newHero = new Marksman(chosenHeroName);
-            break;
-    }
-
-} while (chosenHeroCategory == null|| chosenHeroCategory < 1 || chosenHeroCategory > 3);
+var newHero = CreateNewHero(chosenHeroName);
 
 ShortTimeOutAndConsoleClear();
 
 if (newHero != null)
-    NewHeroInformation(newHero);
+    PrintHeroInformation(newHero);
 
 ClickToContinueAndConsoleClear();
 
 
-
-
-
 //Functions
+
 static void ClickToContinueAndConsoleClear()
 {
     Console.WriteLine("\nPritisnite bilo koju tipku za nastavak!");
@@ -62,13 +34,44 @@ static void ShortTimeOutAndConsoleClear()
     Thread.Sleep(1000);
     Console.Clear();
 }
-static void NewHeroInformation(Hero newHero)
+static void PrintHeroInformation(Hero newHero)
 {
     Console.WriteLine("Osnovne informacije o vašem heroju: \n\n" +
                     $"Ime: {newHero.Name} \n" +
                     $"Damage: {newHero.Damage} \n" +
                     $"Health: {newHero.HealthPoints} \n" +
                     $"Kategorija: {newHero.Category} \n");
+}
+static Hero CreateNewHero(string chosenHeroName)
+{
+    int? chosenHeroCategory;
+    Hero newHero = null;
+    do
+    {
+        Console.Write("Odaberite kategoriju heroja! \n" +
+                " '1' za Gladiatora \n" +
+                " '2' za Enchantera \n" +
+                " '3' za Marksmana \n");
+        chosenHeroCategory = InputInt(Console.ReadLine());
+
+        switch (chosenHeroCategory)
+        {
+            case 1:
+                Console.WriteLine("Odabrali ste Gladiatora!");
+                newHero = new Gladiator(chosenHeroName);
+                break;
+            case 2:
+                Console.WriteLine("Odabrali ste Enchantera!");
+                newHero = new Enchanter(chosenHeroName);
+                break;
+            case 3:
+                Console.WriteLine("Odabrali ste Marksmana!");
+                newHero = new Marksman(chosenHeroName);
+                break;
+        }
+
+    } while (chosenHeroCategory == null || chosenHeroCategory < 1 || chosenHeroCategory > 3);
+    return newHero;
 }
 static int? InputInt(string input)
 {
