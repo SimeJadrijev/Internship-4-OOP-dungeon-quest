@@ -16,5 +16,6 @@ namespace Game.Domain.Repositories
             Experience = (int)MonsterExperience.Goblin;
             Damage = (int)MonsterDamage.Goblin;
         }
+  
     }
 }

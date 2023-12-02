@@ -18,5 +18,10 @@ namespace Game.Domain.Repositories
 
         }
 
+        public void NormalAttack(Hero newHero)
+        {
+            newHero.HealthPoints -= this.Damage
+        }
+
     }
 }

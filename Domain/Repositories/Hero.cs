@@ -23,6 +23,9 @@ namespace Game.Domain.Repositories
             Category = null;
         }
 
-
+        public void NormalAttack(Monster newMonster)
+        {
+            newMonster.HealthPoints -= this.Damage;
+        }
     }
 }
