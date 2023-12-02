@@ -1,4 +1,5 @@
 ﻿using Game.Data;
+using Game.Data.StartingInformation;
 using Game.Domain;
 using Game.Domain.Repositories;
 //Main
@@ -21,6 +22,26 @@ var newMonster = CreateNewMonster(); //Creating a new monster
 PrintMonsterInformation(newMonster); //Printing some basic information about the monster
 ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
+var usersChosenAttack = ChooseAttack(); //User chooses their attack option
+var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
+
+
+if (usersChosenAttack != null)
+{
+    var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
+    if (fightResult == true)
+    {
+        Console.WriteLine("Pobjeda!");
+        newHero.NormalAttack(newMonster);
+    }
+    else if (fightResult == false)
+    {
+        Console.WriteLine("Poraz!");
+        newMonster.NormalAttack(newHero);
+    }
+    else
+        Console.WriteLine("Tie!");
+}
 
 
 
@@ -28,6 +49,60 @@ ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
 
 //Functions
+static bool? RockPaperScissors(int usersChoice, int monstersChoice)
+{
+    var UserAttackOption = (AttackOptions)usersChoice;
+    var MonstersAttackOption = (AttackOptions)monstersChoice;
+    Console.WriteLine("Vaš napad: " + UserAttackOption + "\n" + "Njegov napad: " + MonstersAttackOption);
+    
+    if (UserAttackOption == MonstersAttackOption)
+        return null;
+    else
+    {
+        switch (UserAttackOption)
+        {
+            case AttackOptions.Direct:
+                if (MonstersAttackOption == AttackOptions.Side)
+                    return true;
+                else if (MonstersAttackOption == AttackOptions.Counter)
+                    return false;
+                break;
+            case AttackOptions.Side:
+                if (MonstersAttackOption == AttackOptions.Direct)
+                    return false;
+                else if (MonstersAttackOption == AttackOptions.Counter)
+                    return true;
+                break;
+            case AttackOptions.Counter:
+                if (MonstersAttackOption == AttackOptions.Direct)
+                    return true;
+                else if (MonstersAttackOption == AttackOptions.Side)
+                    return false;
+                break;
+        }
+    }
+    return null;
+}
+int MonstersChosenAttack()
+{
+    var rnd = new Random();
+    return rnd.Next(0, 3);
+}
+ int ChooseAttack()
+{
+    int chosenAttack;
+    do
+    {
+        Console.Write("Odaberite napad: \n" +
+                    "'1' - Direktni napad \n" +
+                    "'2' - Napad s boka \n" +
+                    "'3' - Protunapad \n");
+        chosenAttack = InputInt(Console.ReadLine()) ?? 0;
+
+    } while (chosenAttack > 3 || chosenAttack < 1);
+
+    return chosenAttack - 1; 
+}
 static void PrintMonsterInformation(Monster newMonster)
 {
     Console.WriteLine("Osnovne informacije o sljedećem čudovištu: \n\n" +
