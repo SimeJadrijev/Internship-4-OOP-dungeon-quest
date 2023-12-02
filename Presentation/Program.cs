@@ -11,18 +11,42 @@ while (string.IsNullOrWhiteSpace(chosenHeroName))
     chosenHeroName = Console.ReadLine();
 }
 
-var newHero = CreateNewHero(chosenHeroName);
+var newHero = CreateNewHero(chosenHeroName); //Creating user's hero
+ShortTimeOutAndConsoleClear(); //Short pause and clearing of console
 
-ShortTimeOutAndConsoleClear();
+PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
+ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
-if (newHero != null)
-    PrintHeroInformation(newHero);
+var newMonster = CreateNewMonster(); //Creating a new monster
+PrintMonsterInformation(newMonster); //Printing some basic information about the monster
+ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
-ClickToContinueAndConsoleClear();
+
+
+
+
 
 
 //Functions
+static void PrintMonsterInformation(Monster newMonster)
+{
+    Console.WriteLine("Osnovne informacije o sljedećem čudovištu: \n\n" +
+                    $"Vrsta: {newMonster.Category} \n" +
+                    $"Damage: {newMonster.Damage} \n" +
+                    $"Health: {newMonster.HealthPoints}");
+}
+static Monster CreateNewMonster()
+{
+    var rnd = new Random();
+    var randomNumber = rnd.Next(1, 101);
+    if (randomNumber < 60)
+        return new Goblin();
+    else if (randomNumber < 85)
+        return new Brute();
+    else
+        return new Witch();
 
+}
 static void ClickToContinueAndConsoleClear()
 {
     Console.WriteLine("\nPritisnite bilo koju tipku za nastavak!");
