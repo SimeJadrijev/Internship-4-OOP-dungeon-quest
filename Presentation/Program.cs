@@ -276,7 +276,7 @@ static Hero CreateNewHero(string chosenHeroName)
 }
 static int? InputInt(string input)
 {
-     var result = int.TryParse(input, out int number );
+    var result = int.TryParse(input, out int number );
     if(result)
         return number;
     else
