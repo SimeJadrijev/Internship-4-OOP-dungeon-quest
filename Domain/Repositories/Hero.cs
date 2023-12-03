@@ -71,15 +71,18 @@ namespace Game.Domain.Repositories
             Console.WriteLine($"Ukoliko želite potrošiti {Experience} bodova kako bi vratili puni health, upišite 'da'. Ako ne želite, upišite bilo šta drugo: ");
             var userAnswer = Console.ReadLine();
 
-            if (userAnswer.ToLower() == "da" && Experience > 1)
+            if (userAnswer.ToLower() == "da" && Experience >= 2)
             {
                 HealthPoints = GetInitialHealthPoints();
                 Experience -= (int)Math.Round(Experience / 2.0);
                 Console.WriteLine($"\n Sada imate {HealthPoints} health bodova i {Experience} experience bodova. Sretno! \n");
 
             }
+            else if (userAnswer.ToLower() == "da" && Experience < 2)
+                Console.WriteLine("Nažalost ne možete obnoviti health jer nemate dovoljno experience bodova! \n");
             else
                 Console.WriteLine($"Nastavljate s {HealthPoints} health bodova! Sretno! \n");
+
         }
     }
 }
