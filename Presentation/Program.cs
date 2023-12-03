@@ -15,41 +15,40 @@ while (string.IsNullOrWhiteSpace(chosenHeroName))
 var newHero = CreateNewHero(chosenHeroName); //Creating user's hero
 ShortTimeOutAndConsoleClear(); //Short pause and clearing of console
 
-PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
-ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
-var newMonster = CreateNewMonster(); //Creating a new monster
-PrintMonsterInformation(newMonster); //Printing some basic information about the monster
-ClickToContinueAndConsoleClear(); //Waiting for user to read the info
-
-var usersChosenAttack = ChooseAttack(); //User chooses their attack option
-var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
-
-
-if (usersChosenAttack != null)
+while (IsHeroAlive(newHero))
 {
-    var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
-    if (fightResult == true)
-    {
-        Console.WriteLine("Pobjeda!");
-        var receivedExperience = newHero.NormalAttack(newMonster);
-        newHero.GainExperience(receivedExperience);
-    }
-    else if (fightResult == false)
-    {
-        Console.WriteLine("Poraz!");
-        newMonster.NormalAttack(newHero);
-    }
-    else
-        Console.WriteLine("Tie!");
-}
+    PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
+    ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
-if (IsHeroAlive(newHero))
-{
-    
-    //newHero.GainExperience
-}
+    var newMonster = CreateNewMonster(); //Creating a new monster
+    PrintMonsterInformation(newMonster); //Printing some basic information about the monster
+    ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
+    var usersChosenAttack = ChooseAttack(); //User chooses their attack option
+    var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
+
+
+    if (usersChosenAttack != null)
+    {
+        var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
+        if (fightResult == true)
+        {
+            Console.WriteLine("Pobjeda!");
+            var receivedExperience = newHero.NormalAttack(newMonster);
+            newHero.GainExperience(receivedExperience);
+            newHero.ReturnHealth();
+            
+        }
+        else if (fightResult == false)
+        {
+            Console.WriteLine("Poraz!");
+            newMonster.NormalAttack(newHero);
+        }
+        else
+            Console.WriteLine("Tie!");
+    }
+}
 
 
 

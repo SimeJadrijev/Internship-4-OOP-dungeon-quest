@@ -41,5 +41,11 @@ namespace Game.Domain.Repositories
             else
                 Experience += receivedExperience;
         }
+
+        public void ReturnHealth()
+        {
+            var newHealth = (int)Math.Round(HealthPoints * 0.25);
+            HealthPoints += newHealth;
+        }
     }
 }
