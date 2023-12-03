@@ -26,8 +26,8 @@ namespace Game.Data.StartingInformation
     }
     public enum MonsterExperience
     {
-        Goblin = 10,
-        Brute = 20,
-        Witch = 30
+        Goblin = 15,
+        Brute = 30,
+        Witch = 45
     }
 }

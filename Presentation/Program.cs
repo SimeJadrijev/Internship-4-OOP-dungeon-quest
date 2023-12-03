@@ -32,7 +32,8 @@ if (usersChosenAttack != null)
     if (fightResult == true)
     {
         Console.WriteLine("Pobjeda!");
-        newHero.NormalAttack(newMonster);
+        var receivedExperience = newHero.NormalAttack(newMonster);
+        newHero.GainExperience(receivedExperience);
     }
     else if (fightResult == false)
     {
@@ -43,12 +44,25 @@ if (usersChosenAttack != null)
         Console.WriteLine("Tie!");
 }
 
+if (IsHeroAlive(newHero))
+{
+    
+    //newHero.GainExperience
+}
 
 
 
 
 
 //Functions
+
+static bool IsHeroAlive (Hero newHero)
+{
+    if (newHero.HealthPoints > 0)
+        return true;
+    else
+        return false;
+}
 static bool? RockPaperScissors(int usersChoice, int monstersChoice)
 {
     var UserAttackOption = (AttackOptions)usersChoice;

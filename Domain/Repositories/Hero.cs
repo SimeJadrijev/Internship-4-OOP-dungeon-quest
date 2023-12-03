@@ -23,9 +23,23 @@ namespace Game.Domain.Repositories
             Category = null;
         }
 
-        public void NormalAttack(Monster newMonster)
+        public int NormalAttack(Monster newMonster)
         {
             newMonster.HealthPoints -= this.Damage;
+            var receivedExperience = newMonster.Experience;
+            return receivedExperience;
+        }
+        public void GainExperience(int receivedExperience)
+        {
+            if (Experience + receivedExperience >= 100)
+            {
+                Level++;
+                Experience = (Experience + receivedExperience) - 100;
+                HealthPoints += 10;
+                Damage += 5;
+            }
+            else
+                Experience += receivedExperience;
         }
     }
 }
