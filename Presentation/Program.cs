@@ -19,13 +19,18 @@ PrintHeroInformation(newHero); //Printing some basic information about user's ch
 ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
 
-
-
-for(int i=0; i < 2; i++)
+var listOfMonsters = new List<Monster>();
+for (int i = 0; i < 10; i++)
 {
+    var newMonster = CreateNewMonster(); //Creating a new monster
+    listOfMonsters.Add(newMonster);
+}
+
+foreach(var newMonster in listOfMonsters)
+{
+    var i = 1;
     var roundNumber = 1;
     var receivedExperience = 0;
-    var newMonster = CreateNewMonster(); //Creating a new monster
     PrintMonsterInformation(newMonster); //Printing some basic information about the monster
     ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
@@ -60,9 +65,9 @@ for(int i=0; i < 2; i++)
     }
     if (IsHeroAlive(newHero))   //If hero managed to stay alive
     {
-        Console.Clear();    
+        Console.Clear();
 
-        Console.WriteLine($"\nČestitke! Porazili ste {i+1}. čudovište! Još samo {9-i} čudovišta do kraja!\n");
+        Console.WriteLine($"\nČestitke! Porazili ste {i}. čudovište! Još samo {10 - i} čudovišta do kraja!\n");
         Console.WriteLine($"Dobili ste {receivedExperience} experience bodova. \n");
 
         ClickToContinueAndConsoleClear();
@@ -78,7 +83,10 @@ for(int i=0; i < 2; i++)
         Console.WriteLine("Izgubili ste! Više sreće drugi put :)");
         break;  //Break the for loop
     }
+    i++;
 }
+
+
 
 
 
@@ -191,7 +199,7 @@ static void PrintHeroInformation(Hero newHero)
                     $"Damage: {newHero.Damage} \n" +
                     $"Health: {newHero.HealthPoints} \n" +
                     $"Kategorija: {newHero.Category} \n" +
-                    $"Experience: {newHero.Experience}\n" +
+                    $"Experience: {newHero.Experience}/100\n" +
                     $"Level: {newHero.Level}");
 }
 static Hero CreateNewHero(string chosenHeroName)
