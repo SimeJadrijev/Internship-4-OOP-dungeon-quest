@@ -15,46 +15,84 @@ while (string.IsNullOrWhiteSpace(chosenHeroName))
 var newHero = CreateNewHero(chosenHeroName); //Creating user's hero
 ShortTimeOutAndConsoleClear(); //Short pause and clearing of console
 
+PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
+ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
-while (IsHeroAlive(newHero))
+
+
+
+for(int i=0; i < 2; i++)
 {
-    PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
-    ClickToContinueAndConsoleClear(); //Waiting for user to read the info
-
+    var roundNumber = 1;
+    var receivedExperience = 0;
     var newMonster = CreateNewMonster(); //Creating a new monster
     PrintMonsterInformation(newMonster); //Printing some basic information about the monster
     ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
-    var usersChosenAttack = ChooseAttack(); //User chooses their attack option
-    var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
-
-
-    if (usersChosenAttack != null)
+    while (IsHeroAlive(newHero) && IsMonsterAlive(newMonster))
     {
-        var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
-        if (fightResult == true)
+        var usersChosenAttack = ChooseAttack(); //User chooses their attack option
+        var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
+
+        if (usersChosenAttack != null)
         {
-            Console.WriteLine("Pobjeda!");
-            var receivedExperience = newHero.NormalAttack(newMonster);
-            newHero.GainExperience(receivedExperience);
-            newHero.ReturnHealth();
-            
+            Console.WriteLine("\n" + roundNumber + ". runda \n");
+            var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
+            if (fightResult == true)
+            {
+                Console.WriteLine("\nPobjeda! \n\n");
+                receivedExperience = newHero.NormalAttack(newMonster);
+            }
+            else if (fightResult == false)
+            {
+                Console.WriteLine("\nPoraz! \n\n");
+                newMonster.NormalAttack(newHero);
+            }
+            else
+                Console.WriteLine("\nIzjednačeno! \n\n");
         }
-        else if (fightResult == false)
-        {
-            Console.WriteLine("Poraz!");
-            newMonster.NormalAttack(newHero);
-        }
-        else
-            Console.WriteLine("Tie!");
+        //Printing information about the current state of user's and monster's health:
+        Console.WriteLine("Vaš health: " + newHero.HealthPoints);
+        Console.WriteLine("Čudovištev health: " + newMonster.HealthPoints);
+
+        roundNumber++;  //Incrementing the round number
+        ClickToContinueAndConsoleClear();
+    }
+    if (IsHeroAlive(newHero))   //If hero managed to stay alive
+    {
+        Console.Clear();    
+
+        Console.WriteLine($"\nČestitke! Porazili ste {i+1}. čudovište! Još samo {9-i} čudovišta do kraja!\n");
+        Console.WriteLine($"Dobili ste {receivedExperience} experience bodova. \n");
+
+        ClickToContinueAndConsoleClear();
+
+        newHero.ReturnHealth(); // Return 25% of user's previous health
+        newHero.GainExperience(receivedExperience); //  Receive monster's experience points
+
+        PrintHeroInformation(newHero);  //  Print hero's updated stats (health, experience, and similar information)
+
+    }
+    else    // If hero didn't manage to stay alive
+    {
+        Console.WriteLine("Izgubili ste! Više sreće drugi put :)");
+        break;  //Break the for loop
     }
 }
 
 
 
 
+
 //Functions
 
+static bool IsMonsterAlive(Monster newMonster)
+{
+    if (newMonster.HealthPoints > 0)
+        return true;
+    else
+        return false;
+}
 static bool IsHeroAlive (Hero newHero)
 {
     if (newHero.HealthPoints > 0)
@@ -152,7 +190,9 @@ static void PrintHeroInformation(Hero newHero)
                     $"Ime: {newHero.Name} \n" +
                     $"Damage: {newHero.Damage} \n" +
                     $"Health: {newHero.HealthPoints} \n" +
-                    $"Kategorija: {newHero.Category} \n");
+                    $"Kategorija: {newHero.Category} \n" +
+                    $"Experience: {newHero.Experience}\n" +
+                    $"Level: {newHero.Level}");
 }
 static Hero CreateNewHero(string chosenHeroName)
 {
