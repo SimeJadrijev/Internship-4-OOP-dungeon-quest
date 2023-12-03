@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Data.StartingInformation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -46,8 +47,39 @@ namespace Game.Domain.Repositories
         {
             var newHealth = (int)Math.Round(HealthPoints * 0.25);
             HealthPoints += newHealth;
+            if (HealthPoints > GetInitialHealthPoints())
+                HealthPoints = GetInitialHealthPoints();
+        }
+        private int GetInitialHealthPoints()
+        {
+            switch (Category)
+            {
+                case "Gladiator":
+                    return (int)HeroHealthPoints.Gladiator;
+                case "Enchanter":
+                    return (int)HeroHealthPoints.Enchanter;
+                case "Marksman":
+                    return (int)HeroHealthPoints.Marksman;
+                default:
+                    throw new InvalidOperationException("Nepostojeći heroj!");
+            }
         }
 
-        
+
+        public void TradeExperienceForHealth()
+        {
+            Console.WriteLine($"Ukoliko želite potrošiti {Experience} bodova kako bi vratili puni health, upišite 'da'. Ako ne želite, upišite bilo šta drugo: ");
+            var userAnswer = Console.ReadLine();
+
+            if (userAnswer.ToLower() == "da" && Experience > 1)
+            {
+                HealthPoints = GetInitialHealthPoints();
+                Experience -= (int)Math.Round(Experience / 2.0);
+                Console.WriteLine($"\n Sada imate {HealthPoints} health bodova i {Experience} experience bodova. Sretno! \n");
+
+            }
+            else
+                Console.WriteLine($"Nastavljate s {HealthPoints} health bodova! Sretno! \n");
+        }
     }
 }

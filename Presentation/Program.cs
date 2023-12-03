@@ -77,6 +77,9 @@ foreach(var newMonster in listOfMonsters)
 
         PrintHeroInformation(newHero);  //  Print hero's updated stats (health, experience, and similar information)
         ClickToContinueAndConsoleClear();
+
+        newHero.TradeExperienceForHealth();
+        ClickToContinueAndConsoleClear();
     }
     else    // If hero didn't manage to stay alive
     {
