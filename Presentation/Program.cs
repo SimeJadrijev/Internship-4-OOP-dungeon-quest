@@ -38,18 +38,18 @@ for(int i=0; i < 2; i++)
         {
             Console.WriteLine("\n" + roundNumber + ". runda \n");
             var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
-            if (fightResult == true)
+            if (fightResult == true)    //  If user won the round
             {
                 Console.WriteLine("\nPobjeda! \n\n");
-                receivedExperience = newHero.NormalAttack(newMonster);
+                receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster (only normal attack for now)
             }
-            else if (fightResult == false)
+            else if (fightResult == false)  //  If user lost the round
             {
                 Console.WriteLine("\nPoraz! \n\n");
-                newMonster.NormalAttack(newHero);
+                newMonster.NormalAttack(newHero);   //  Monster attacks the hero
             }
-            else
-                Console.WriteLine("\nIzjednačeno! \n\n");
+            else                             //  If the round was tied
+                Console.WriteLine("\nIzjednačeno! \n\n");   //  Just print that the result is a tie
         }
         //Printing information about the current state of user's and monster's health:
         Console.WriteLine("Vaš health: " + newHero.HealthPoints);
@@ -71,7 +71,7 @@ for(int i=0; i < 2; i++)
         newHero.GainExperience(receivedExperience); //  Receive monster's experience points
 
         PrintHeroInformation(newHero);  //  Print hero's updated stats (health, experience, and similar information)
-
+        ClickToContinueAndConsoleClear();
     }
     else    // If hero didn't manage to stay alive
     {

@@ -14,9 +14,9 @@ namespace Game.Data.StartingInformation
     }
     public enum MonsterDamage
     {
-        Goblin = 10,
-        Brute = 20,
-        Witch = 30
+        Goblin = 15,
+        Brute = 25,
+        Witch = 35
     }
     public enum MonsterHealthPoints
     {

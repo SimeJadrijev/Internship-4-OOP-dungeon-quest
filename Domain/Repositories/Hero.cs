@@ -47,5 +47,7 @@ namespace Game.Domain.Repositories
             var newHealth = (int)Math.Round(HealthPoints * 0.25);
             HealthPoints += newHealth;
         }
+
+        
     }
 }
