@@ -12,8 +12,12 @@ while (string.IsNullOrWhiteSpace(chosenHeroName))
     chosenHeroName = Console.ReadLine();
 }
 
+
 var newHero = CreateNewHero(chosenHeroName); //Creating user's hero
 ShortTimeOutAndConsoleClear(); //Short pause and clearing of console
+
+newHero = CreateCustomHero(newHero); //Allowing the user to enter custom values for damage and health points
+ClickToContinueAndConsoleClear();
 
 PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
 ClickToContinueAndConsoleClear(); //Waiting for user to read the info
@@ -97,6 +101,40 @@ foreach(var newMonster in listOfMonsters)
 
 //Functions
 
+static Hero CreateCustomHero(Hero newHero)
+{
+    Console.Write("\nAko želite unijeti svoje 'custom' vrijednosti za health i damage, unesite 'da'. \n" +
+            "Ukoliko želite da vam se dodijele normalne vrijednosti, unesite bilo što drugo. \n");
+    var requestForCustomHero = Console.ReadLine();
+
+    int? customHealth, customDamage;
+    if (requestForCustomHero.ToLower() == "da")
+    {
+        Console.WriteLine();
+
+        do
+        {
+            Console.Write("Unesite željenu vrijednost za health (prirodan broj): ");
+            customHealth = InputInt(Console.ReadLine());
+        }
+        while (customHealth == null || customHealth < 1);
+
+        Console.WriteLine();
+
+        do
+        {
+            Console.Write("Unesite željenu vrijednost za damage (prirodan broj): ");
+            customDamage = InputInt(Console.ReadLine());
+        }
+        while (customDamage == null || customDamage < 1);
+
+        newHero.HealthPoints = customHealth.Value;
+        newHero.Damage = customDamage.Value;
+        
+    }
+
+    return newHero;
+} 
 static bool IsMonsterAlive(Monster newMonster)
 {
     if (newMonster.HealthPoints > 0)

@@ -23,7 +23,14 @@ namespace Game.Domain.Repositories
             Level = 1;
             Category = null;
         }
-
+        public Hero(string name, int customHealthPoints, int customDamage, string category)
+        {
+            Name = name;
+            HealthPoints = customHealthPoints;
+            Damage = customDamage;
+            Category = category;
+        }
+        
         public int NormalAttack(Monster newMonster)
         {
             newMonster.HealthPoints -= this.Damage;
@@ -47,8 +54,8 @@ namespace Game.Domain.Repositories
         {
             var newHealth = (int)Math.Round(HealthPoints * 0.25);
             HealthPoints += newHealth;
-            if (HealthPoints > GetInitialHealthPoints())
-                HealthPoints = GetInitialHealthPoints();
+            //if (HealthPoints > GetInitialHealthPoints())  //Ne pise u zadatku da se moze vratit samo do pocetnog healtha?
+                //HealthPoints = GetInitialHealthPoints();
         }
         private int GetInitialHealthPoints()
         {
