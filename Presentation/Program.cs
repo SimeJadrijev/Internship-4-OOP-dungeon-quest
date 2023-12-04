@@ -4,6 +4,7 @@ using Game.Domain;
 using Game.Domain.Repositories;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 //Main
 Console.WriteLine("Dobrodošli u Dungeon Quest! \n\n");
@@ -25,6 +26,7 @@ ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
 ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
+
 switch (newHero.Category)
 {
     case "Gladiator":       
@@ -39,6 +41,30 @@ switch (newHero.Category)
 
 //Functions
 
+int TradeManaForHealth(Hero newHero, int manaAmount)
+{
+    Console.WriteLine($"Ako želite možete zamijeniti mana bodove da bi poboljšali health bodove.");
+    Console.Write("Unesite 'da' ako želite to učiniti ili bilo što drugo ako ne želite: ");
+    var tradeRequest = Console.ReadLine();
+
+    int? requestedAmount = null;
+
+    if (tradeRequest.ToLower() == "da")
+    {
+        while (requestedAmount == null || requestedAmount > (manaAmount - 6) || requestedAmount < 1)
+        {
+            Console.Write($"Unesite prirodni broj 1 - {manaAmount - 6} (jer vam treba minimalno 5 bodova za napad): ");
+            requestedAmount = InputInt(Console.ReadLine());
+        }
+
+        newHero.HealthPoints += (int)requestedAmount;
+        manaAmount -= (int)requestedAmount;
+        Console.WriteLine($"Sada imate {newHero.HealthPoints} health bodova i {manaAmount} mana bodova.\n");
+        ClickToContinueAndConsoleClear();
+    }
+    return manaAmount;
+}
+
 void EnchanterGame (Hero newHero)
 {
     var listOfMonsters = new List<Monster>();
@@ -47,44 +73,65 @@ void EnchanterGame (Hero newHero)
         var newMonster = CreateNewMonster(); //Creating a new monster
         listOfMonsters.Add(newMonster);
     }
-
-    var initialHealth = newHero.HealthPoints;   //Saving initial health points value (in case we need to return it after using extra life)
+    var j = 1;
+    var initialHealth = newHero.HealthPoints; //+ (1 + (newHero.Level*10) /100);   //Saving initial health points value (in case we need to return it after using extra life)
     var extraLife = 1;      //Number of extra lives that enchanter is allowed to use
-
+    var initialMana = 30;   //Initial amount of Mana
     foreach (var newMonster in listOfMonsters)
     {
-        var i = 1;
         var roundNumber = 1;
         var receivedExperience = 0;
+        var manaAmount = initialMana * newHero.Level;   // each fight, the mana amount is restarted. Higher level gives more mana.
 
         PrintMonsterInformation(newMonster); //Printing some basic information about the monster
         ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
-        while (IsHeroAlive(newHero) && IsMonsterAlive(newMonster))
+        while (IsHeroAlive(newHero) && IsMonsterAlive(newMonster))  //Run the protocol until someone dies.
         {
-            var usersChosenAttack = ChooseAttack(); //User chooses their attack option
-            var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
+            if(manaAmount > 5)
+                manaAmount = TradeManaForHealth(newHero, manaAmount); // Checking if user wants to trade Mana for Health points
+            else
+                Console.WriteLine("Potrebno vam je minimalno 6 mana bodova za zamjenu bodova! \n");
 
-            if (usersChosenAttack != null)
+            if (manaAmount < 5)
             {
-                Console.WriteLine("\n" + roundNumber + ". runda \n");
-                var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
-                if (fightResult == true)    //  If user won the round
-                {
-                    Console.WriteLine("\nPobjeda! \n\n");
-                    receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster (only normal attack for now)
-                }
-                else if (fightResult == false)  //  If user lost the round
-                {
-                    Console.WriteLine("\nPoraz! \n\n");
-                    newMonster.NormalAttack(newHero);   //  Monster attacks the hero
-                }
-                else                             //  If the round was tied
-                    Console.WriteLine("\nIzjednačeno! \n\n");   //  Just print that the result is a tie
+                Console.WriteLine($"Nemate dovoljno mane za napad! (imate {manaAmount}, a treba vam minimalno 5) \n" +
+                                "U ovoj rundi će vam se obnoviti mana, ali nećete imati pravo napada\n" +
+                                "pa čudovište automatski pobjeđuje ovu rundu.\n");
+                newMonster.NormalAttack(newHero);
+                manaAmount = initialMana * newHero.Level;
+                ClickToContinueAndConsoleClear();
             }
+            else
+            {
+                var usersChosenAttack = ChooseAttack(); //User chooses their attack option
+                var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
+
+                if (usersChosenAttack != null)
+                {
+                    Console.WriteLine("\n" + roundNumber + ". runda \n");
+                    var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
+                    if (fightResult == true)    //  If user won the round
+                    {
+                        Console.WriteLine("\nPobjeda! \n\n");
+                        receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster (only normal attack for now)
+                    }
+                    else if (fightResult == false)  //  If user lost the round
+                    {
+                        Console.WriteLine("\nPoraz! \n\n");
+                        newMonster.NormalAttack(newHero);   //  Monster attacks the hero
+                    }
+                    else                             //  If the round was tied
+                        Console.WriteLine("\nIzjednačeno! \n\n");   //  Just print that the result is a tie
+                }
+                manaAmount -= 5;
+            }
+
+            
             //Printing information about the current state of user's and monster's health:
             Console.WriteLine("Vaš health: " + newHero.HealthPoints);
             Console.WriteLine("Čudovištev health: " + newMonster.HealthPoints);
+            Console.WriteLine("Mana: " + manaAmount);
 
             if (newHero.HealthPoints <= 0 && extraLife == 1)    //If we lost, but didn't use an extra life yet
             {
@@ -100,15 +147,17 @@ void EnchanterGame (Hero newHero)
         {
             Console.Clear();
 
-            Console.WriteLine($"\nČestitke! Porazili ste {i}. čudovište! Još samo {10 - i} čudovišta do kraja!\n");
+            Console.WriteLine($"\nČestitke! Porazili ste {j}. čudovište! Još samo {10 - j} čudovišta do kraja!\n");
             Console.WriteLine($"Dobili ste {receivedExperience} experience bodova. \n");
 
             ClickToContinueAndConsoleClear();
 
             newHero.ReturnHealth(); // Return 25% of user's previous health
             newHero.GainExperience(receivedExperience); //  Receive monster's experience points
+            manaAmount = initialMana * newHero.Level;   // Returning the initial mana amount after the fight
 
             PrintHeroInformation(newHero);  //  Print hero's updated stats (health, experience, and similar information)
+            Console.WriteLine("Mana: " + manaAmount);
             ClickToContinueAndConsoleClear();
 
             newHero.TradeExperienceForHealth(); //In case we want to trade half of our experience for health points
@@ -116,11 +165,13 @@ void EnchanterGame (Hero newHero)
         }
         else    // If hero didn't manage to stay alive
         {
-            Console.WriteLine("Izgubili ste! Više sreće drugi put :)");
+            Console.WriteLine("\n\nIzgubili ste! Više sreće drugi put :)\n\n");
             break;  //Break the for loop
         }
-        i++;
+        j++;
     }
+    Console.Clear();
+    Console.WriteLine("Čestitke!!! Porazili ste svih 10 čudovišta!");
 }
 
 void DeleteRage(Hero newHero, int rememberDamage)
@@ -142,10 +193,9 @@ void GladiatorGame(Hero newHero)
         var newMonster = CreateNewMonster(); //Creating a new monster
         listOfMonsters.Add(newMonster);
     }
-
+    var j = 1;
     foreach (var newMonster in listOfMonsters)
     {
-        var i = 1;
         var roundNumber = 1;
         var receivedExperience = 0;
         PrintMonsterInformation(newMonster); //Printing some basic information about the monster
@@ -197,7 +247,7 @@ void GladiatorGame(Hero newHero)
         {
             Console.Clear();
 
-            Console.WriteLine($"\nČestitke! Porazili ste {i}. čudovište! Još samo {10 - i} čudovišta do kraja!\n");
+            Console.WriteLine($"\nČestitke! Porazili ste {j}. čudovište! Još samo {10 - j} čudovišta do kraja!\n");
             Console.WriteLine($"Dobili ste {receivedExperience} experience bodova. \n");
 
             ClickToContinueAndConsoleClear();
@@ -216,8 +266,10 @@ void GladiatorGame(Hero newHero)
             Console.WriteLine("Izgubili ste! Više sreće drugi put :)");
             break;  //Break the for loop
         }
-        i++;
+        j++;
     }
+    Console.Clear();
+    Console.WriteLine("Čestitke!!! Porazili ste svih 10 čudovišta!");
 }
 
 static Hero CreateCustomHero(Hero newHero)

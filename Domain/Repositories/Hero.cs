@@ -76,7 +76,7 @@ namespace Game.Domain.Repositories
 
         public void TradeExperienceForHealth()
         {
-            Console.WriteLine($"Ukoliko želite potrošiti {Experience} bodova kako bi vratili puni health, upišite 'da'. Ako ne želite, upišite bilo šta drugo: ");
+            Console.WriteLine($"Ukoliko želite potrošiti {Experience} experience bodova kako bi vratili puni health, upišite 'da'. Ako ne želite, upišite bilo šta drugo: ");
             var userAnswer = Console.ReadLine();
 
             if (userAnswer.ToLower() == "da" && Experience >= 2)
