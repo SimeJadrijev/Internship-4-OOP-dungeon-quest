@@ -9,7 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 Console.WriteLine("Dobrodošli u Dungeon Quest! \n\n");
 
 string chosenHeroName = null;
-while (string.IsNullOrWhiteSpace(chosenHeroName))
+while (string.IsNullOrWhiteSpace(chosenHeroName))   //Ask the user to choose their hero's name until it's not blank
 {
     Console.Write("Odaberite ime svog heroja: ");
     chosenHeroName = Console.ReadLine();
@@ -20,21 +20,108 @@ var newHero = CreateNewHero(chosenHeroName); //Creating user's hero
 ShortTimeOutAndConsoleClear(); //Short pause and clearing of console
 
 newHero = CreateCustomHero(newHero); //Allowing the user to enter custom values for damage and health points
-ClickToContinueAndConsoleClear();
+ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
 PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
 ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
 switch (newHero.Category)
 {
-    case "Gladiator":
-        GladiatorGame(newHero);
+    case "Gladiator":       
+        GladiatorGame(newHero);     //If user chose the gladiator category, start the GladiatorGame function
+        break;
+    case "Enchanter":
+        EnchanterGame(newHero);
         break;
 }
 
 
 
 //Functions
+
+void EnchanterGame (Hero newHero)
+{
+    var listOfMonsters = new List<Monster>();
+    for (int i = 0; i < 10; i++)
+    {
+        var newMonster = CreateNewMonster(); //Creating a new monster
+        listOfMonsters.Add(newMonster);
+    }
+
+    var initialHealth = newHero.HealthPoints;   //Saving initial health points value (in case we need to return it after using extra life)
+    var extraLife = 1;      //Number of extra lives that enchanter is allowed to use
+
+    foreach (var newMonster in listOfMonsters)
+    {
+        var i = 1;
+        var roundNumber = 1;
+        var receivedExperience = 0;
+
+        PrintMonsterInformation(newMonster); //Printing some basic information about the monster
+        ClickToContinueAndConsoleClear(); //Waiting for user to read the info
+
+        while (IsHeroAlive(newHero) && IsMonsterAlive(newMonster))
+        {
+            var usersChosenAttack = ChooseAttack(); //User chooses their attack option
+            var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
+
+            if (usersChosenAttack != null)
+            {
+                Console.WriteLine("\n" + roundNumber + ". runda \n");
+                var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
+                if (fightResult == true)    //  If user won the round
+                {
+                    Console.WriteLine("\nPobjeda! \n\n");
+                    receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster (only normal attack for now)
+                }
+                else if (fightResult == false)  //  If user lost the round
+                {
+                    Console.WriteLine("\nPoraz! \n\n");
+                    newMonster.NormalAttack(newHero);   //  Monster attacks the hero
+                }
+                else                             //  If the round was tied
+                    Console.WriteLine("\nIzjednačeno! \n\n");   //  Just print that the result is a tie
+            }
+            //Printing information about the current state of user's and monster's health:
+            Console.WriteLine("Vaš health: " + newHero.HealthPoints);
+            Console.WriteLine("Čudovištev health: " + newMonster.HealthPoints);
+
+            if (newHero.HealthPoints <= 0 && extraLife == 1)    //If we lost, but didn't use an extra life yet
+            {
+                Console.WriteLine("\nIzgubili ste, ali budući da ste izabrali Enchantera, imate jedan dodatan život! Sretno! \n");
+                newHero.HealthPoints = initialHealth;   //Our initial health is returned
+                extraLife--;            //The extra life is used
+            }
+
+            roundNumber++;  //Incrementing the round number
+            ClickToContinueAndConsoleClear();
+        }
+        if (IsHeroAlive(newHero))   //If hero managed to stay alive
+        {
+            Console.Clear();
+
+            Console.WriteLine($"\nČestitke! Porazili ste {i}. čudovište! Još samo {10 - i} čudovišta do kraja!\n");
+            Console.WriteLine($"Dobili ste {receivedExperience} experience bodova. \n");
+
+            ClickToContinueAndConsoleClear();
+
+            newHero.ReturnHealth(); // Return 25% of user's previous health
+            newHero.GainExperience(receivedExperience); //  Receive monster's experience points
+
+            PrintHeroInformation(newHero);  //  Print hero's updated stats (health, experience, and similar information)
+            ClickToContinueAndConsoleClear();
+
+            newHero.TradeExperienceForHealth(); //In case we want to trade half of our experience for health points
+            ClickToContinueAndConsoleClear();
+        }
+        else    // If hero didn't manage to stay alive
+        {
+            Console.WriteLine("Izgubili ste! Više sreće drugi put :)");
+            break;  //Break the for loop
+        }
+        i++;
+    }
+}
 
 void DeleteRage(Hero newHero, int rememberDamage)
 {
@@ -72,7 +159,7 @@ void GladiatorGame(Hero newHero)
             var rememberDamage = newHero.Damage;
             if (rageAttackQuestion == "da")
             {
-                RageAttack(newHero);    //Ukljuci rage
+                RageAttack(newHero);    //Use rage
                 Console.WriteLine($"Odabrali ste opciju Rage napad, tako da ćete sad imati: \n" +
                                 $" {newHero.Damage} damage bodova \n" +
                                 $" {newHero.HealthPoints} health bodova \n");
@@ -319,3 +406,74 @@ static int? InputInt(string input)
         return null;
 }
 
+/*
+  var listOfMonsters = new List<Monster>();
+    for (int i = 0; i < 10; i++)
+    {
+        var newMonster = CreateNewMonster(); //Creating a new monster
+        listOfMonsters.Add(newMonster);
+    }
+
+    foreach (var newMonster in listOfMonsters)
+    {
+        var i = 1;
+        var roundNumber = 1;
+        var receivedExperience = 0;
+        PrintMonsterInformation(newMonster); //Printing some basic information about the monster
+        ClickToContinueAndConsoleClear(); //Waiting for user to read the info
+
+        while (IsHeroAlive(newHero) && IsMonsterAlive(newMonster))
+        {
+            var usersChosenAttack = ChooseAttack(); //User chooses their attack option
+            var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
+
+            if (usersChosenAttack != null)
+            {
+                Console.WriteLine("\n" + roundNumber + ". runda \n");
+                var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
+                if (fightResult == true)    //  If user won the round
+                {
+                    Console.WriteLine("\nPobjeda! \n\n");
+                    receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster (only normal attack for now)
+                }
+                else if (fightResult == false)  //  If user lost the round
+                {
+                    Console.WriteLine("\nPoraz! \n\n");
+                    newMonster.NormalAttack(newHero);   //  Monster attacks the hero
+                }
+                else                             //  If the round was tied
+                    Console.WriteLine("\nIzjednačeno! \n\n");   //  Just print that the result is a tie
+            }
+            //Printing information about the current state of user's and monster's health:
+            Console.WriteLine("Vaš health: " + newHero.HealthPoints);
+            Console.WriteLine("Čudovištev health: " + newMonster.HealthPoints);
+
+            roundNumber++;  //Incrementing the round number
+            ClickToContinueAndConsoleClear();
+        }
+        if (IsHeroAlive(newHero))   //If hero managed to stay alive
+        {
+            Console.Clear();
+
+            Console.WriteLine($"\nČestitke! Porazili ste {i}. čudovište! Još samo {10 - i} čudovišta do kraja!\n");
+            Console.WriteLine($"Dobili ste {receivedExperience} experience bodova. \n");
+
+            ClickToContinueAndConsoleClear();
+
+            newHero.ReturnHealth(); // Return 25% of user's previous health
+            newHero.GainExperience(receivedExperience); //  Receive monster's experience points
+
+            PrintHeroInformation(newHero);  //  Print hero's updated stats (health, experience, and similar information)
+            ClickToContinueAndConsoleClear();
+
+            newHero.TradeExperienceForHealth();
+            ClickToContinueAndConsoleClear();
+        }
+        else    // If hero didn't manage to stay alive
+        {
+            Console.WriteLine("Izgubili ste! Više sreće drugi put :)");
+            break;  //Break the for loop
+        }
+        i++;
+    }
+*/
