@@ -35,6 +35,7 @@ namespace Game.Domain.Repositories
         {
             newMonster.HealthPoints -= this.Damage;
             var receivedExperience = newMonster.Experience;
+
             return receivedExperience;
         }
         public void GainExperience(int receivedExperience)

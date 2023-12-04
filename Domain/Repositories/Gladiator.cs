@@ -10,6 +10,7 @@ namespace Game.Domain.Repositories
     public class Gladiator : Hero
     {
         public double Rage { get; set; }
+
         public Gladiator(string name) : base(name)
         {
             Category = "Gladiator";

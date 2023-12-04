@@ -2,6 +2,9 @@
 using Game.Data.StartingInformation;
 using Game.Domain;
 using Game.Domain.Repositories;
+using System;
+using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 //Main
 Console.WriteLine("Dobrodošli u Dungeon Quest! \n\n");
 
@@ -22,84 +25,113 @@ ClickToContinueAndConsoleClear();
 PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
 ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
-
-var listOfMonsters = new List<Monster>();
-for (int i = 0; i < 10; i++)
+switch (newHero.Category)
 {
-    var newMonster = CreateNewMonster(); //Creating a new monster
-    listOfMonsters.Add(newMonster);
+    case "Gladiator":
+        GladiatorGame(newHero);
+        break;
 }
-
-foreach(var newMonster in listOfMonsters)
-{
-    var i = 1;
-    var roundNumber = 1;
-    var receivedExperience = 0;
-    PrintMonsterInformation(newMonster); //Printing some basic information about the monster
-    ClickToContinueAndConsoleClear(); //Waiting for user to read the info
-
-    while (IsHeroAlive(newHero) && IsMonsterAlive(newMonster))
-    {
-        var usersChosenAttack = ChooseAttack(); //User chooses their attack option
-        var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
-
-        if (usersChosenAttack != null)
-        {
-            Console.WriteLine("\n" + roundNumber + ". runda \n");
-            var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
-            if (fightResult == true)    //  If user won the round
-            {
-                Console.WriteLine("\nPobjeda! \n\n");
-                receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster (only normal attack for now)
-            }
-            else if (fightResult == false)  //  If user lost the round
-            {
-                Console.WriteLine("\nPoraz! \n\n");
-                newMonster.NormalAttack(newHero);   //  Monster attacks the hero
-            }
-            else                             //  If the round was tied
-                Console.WriteLine("\nIzjednačeno! \n\n");   //  Just print that the result is a tie
-        }
-        //Printing information about the current state of user's and monster's health:
-        Console.WriteLine("Vaš health: " + newHero.HealthPoints);
-        Console.WriteLine("Čudovištev health: " + newMonster.HealthPoints);
-
-        roundNumber++;  //Incrementing the round number
-        ClickToContinueAndConsoleClear();
-    }
-    if (IsHeroAlive(newHero))   //If hero managed to stay alive
-    {
-        Console.Clear();
-
-        Console.WriteLine($"\nČestitke! Porazili ste {i}. čudovište! Još samo {10 - i} čudovišta do kraja!\n");
-        Console.WriteLine($"Dobili ste {receivedExperience} experience bodova. \n");
-
-        ClickToContinueAndConsoleClear();
-
-        newHero.ReturnHealth(); // Return 25% of user's previous health
-        newHero.GainExperience(receivedExperience); //  Receive monster's experience points
-
-        PrintHeroInformation(newHero);  //  Print hero's updated stats (health, experience, and similar information)
-        ClickToContinueAndConsoleClear();
-
-        newHero.TradeExperienceForHealth();
-        ClickToContinueAndConsoleClear();
-    }
-    else    // If hero didn't manage to stay alive
-    {
-        Console.WriteLine("Izgubili ste! Više sreće drugi put :)");
-        break;  //Break the for loop
-    }
-    i++;
-}
-
-
-
-
 
 
 
 //Functions
+
+void DeleteRage(Hero newHero, int rememberDamage)
+{
+    newHero.Damage = rememberDamage;
+}
+void RageAttack(Hero newHero)
+{
+    var reduceHealth = (int)Math.Round(newHero.HealthPoints * 0.2); //0.2 = Rage coefficient
+    newHero.HealthPoints -= reduceHealth;
+
+    newHero.Damage *= 2;
+}
+void GladiatorGame(Hero newHero)
+{
+    var listOfMonsters = new List<Monster>();
+    for (int i = 0; i < 10; i++)
+    {
+        var newMonster = CreateNewMonster(); //Creating a new monster
+        listOfMonsters.Add(newMonster);
+    }
+
+    foreach (var newMonster in listOfMonsters)
+    {
+        var i = 1;
+        var roundNumber = 1;
+        var receivedExperience = 0;
+        PrintMonsterInformation(newMonster); //Printing some basic information about the monster
+        ClickToContinueAndConsoleClear(); //Waiting for user to read the info
+
+        while (IsHeroAlive(newHero) && IsMonsterAlive(newMonster))
+        {
+            Console.Write("Ako želite kroz ovu borbu koristiti Rage napad, unesite 'da'. \n" +
+                        "Ako ne želite, unesite bilo šta drugo.\n");
+            var rageAttackQuestion = Console.ReadLine();
+            var rememberDamage = newHero.Damage;
+            if (rageAttackQuestion == "da")
+            {
+                RageAttack(newHero);    //Ukljuci rage
+                Console.WriteLine($"Odabrali ste opciju Rage napad, tako da ćete sad imati: \n" +
+                                $" {newHero.Damage} damage bodova \n" +
+                                $" {newHero.HealthPoints} health bodova \n");
+            }
+
+            var usersChosenAttack = ChooseAttack(); //User chooses their attack option
+            var monstersChosenAttack = MonstersChosenAttack(); //Monster's attack option gets randomly chosen
+
+            if (usersChosenAttack != null)
+            {
+                Console.WriteLine("\n" + roundNumber + ". runda \n");
+                var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
+                if (fightResult == true)    //  If user won the round
+                {
+                    Console.WriteLine("\nPobjeda! \n\n");
+                    receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster (only normal attack for now)
+                }
+                else if (fightResult == false)  //  If user lost the round
+                {
+                    Console.WriteLine("\nPoraz! \n\n");
+                    newMonster.NormalAttack(newHero);   //  Monster attacks the hero
+                }
+                else                             //  If the round was tied
+                    Console.WriteLine("\nIzjednačeno! \n\n");   //  Just print that the result is a tie
+            }
+            //Printing information about the current state of user's and monster's health:
+            Console.WriteLine("Vaš health: " + newHero.HealthPoints);
+            Console.WriteLine("Čudovištev health: " + newMonster.HealthPoints);
+
+            roundNumber++;  //Incrementing the round number
+            DeleteRage(newHero,rememberDamage); //Return normal damage points
+            ClickToContinueAndConsoleClear();
+        }
+        if (IsHeroAlive(newHero))   //If hero managed to stay alive
+        {
+            Console.Clear();
+
+            Console.WriteLine($"\nČestitke! Porazili ste {i}. čudovište! Još samo {10 - i} čudovišta do kraja!\n");
+            Console.WriteLine($"Dobili ste {receivedExperience} experience bodova. \n");
+
+            ClickToContinueAndConsoleClear();
+
+            newHero.ReturnHealth(); // Return 25% of user's previous health
+            newHero.GainExperience(receivedExperience); //  Receive monster's experience points
+
+            PrintHeroInformation(newHero);  //  Print hero's updated stats (health, experience, and similar information)
+            ClickToContinueAndConsoleClear();
+
+            newHero.TradeExperienceForHealth();
+            ClickToContinueAndConsoleClear();
+        }
+        else    // If hero didn't manage to stay alive
+        {
+            Console.WriteLine("Izgubili ste! Više sreće drugi put :)");
+            break;  //Break the for loop
+        }
+        i++;
+    }
+}
 
 static Hero CreateCustomHero(Hero newHero)
 {
@@ -247,6 +279,10 @@ static Hero CreateNewHero(string chosenHeroName)
 {
     int? chosenHeroCategory;
     Hero newHero = null;
+    Console.WriteLine("\nOsnovne informacije o svakoj vrsti heroja: \n\n" +
+                      "Gladiator -> Health: 100 - Damage: 10 - Rage napad \n" +
+                      "Enchanter -> Health: 60 - Damage: 30 - Jedan extra život - Mana \n" +
+                      "Marksman -> Health: 80 - Damage: 20 - Critical chance - Stun chance \n");
     do
     {
         Console.Write("Odaberite kategoriju heroja! \n" +
