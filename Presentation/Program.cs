@@ -208,6 +208,7 @@ void MarksmanGame(Hero newHero)
 
     Console.Clear();
     Console.WriteLine("Čestitke!!! Porazili ste sva čudovišta!");
+    ClickToContinueAndConsoleClear();
 }
 
 int TradeManaForHealth(Hero newHero, int manaAmount)
@@ -351,6 +352,7 @@ void EnchanterGame (Hero newHero)
     }
     Console.Clear();
     Console.WriteLine("Čestitke!!! Porazili ste svih 10 čudovišta!");
+    ClickToContinueAndConsoleClear();
 }
 
 void DeleteRage(Hero newHero, int rememberDamage)
@@ -461,6 +463,7 @@ void GladiatorGame(Hero newHero)
     }
     Console.Clear();
     Console.WriteLine("Čestitke!!! Porazili ste svih 10 čudovišta!");
+    ClickToContinueAndConsoleClear();
 }
 
 static Hero CreateCustomHero(Hero newHero)

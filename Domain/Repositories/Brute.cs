@@ -16,5 +16,10 @@ namespace Game.Domain.Repositories
             Experience = (int)MonsterExperience.Brute;
             Damage = (int)MonsterDamage.Brute;
         }
+
+        public void StrongAttack(Hero newHero)
+        {
+            newHero.HealthPoints -= (int)Math.Round(HealthPoints * 0.5);    //Reduce heros's health for 50%
+        }
     }
 }
