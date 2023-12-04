@@ -20,11 +20,11 @@ namespace Game.Domain.Repositories
             ExtraLife = 1;
         }
 
-
+        /*
         public void UseMana()
         {
             Console.Write($"Koliko mane želite zamijeniti za health bodove (maksimalno: {Mana})? ");
-            // Treba nastavit
+
         }
         public void UseExtraLife()
         {
@@ -33,6 +33,7 @@ namespace Game.Domain.Repositories
             else
                 Console.WriteLine("Dodatni život je potrošen!");
         }
+        */
 
     }
 }

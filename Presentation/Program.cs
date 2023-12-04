@@ -7,42 +7,75 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 //Main
-Console.WriteLine("Dobrodošli u Dungeon Quest! \n\n");
 
-string chosenHeroName = null;
-while (string.IsNullOrWhiteSpace(chosenHeroName))   //Ask the user to choose their hero's name until it's not blank
+while (true)
 {
-    Console.Write("Odaberite ime svog heroja: ");
-    chosenHeroName = Console.ReadLine();
+    string startOrQuit;
+    while (true)
+    {
+        Console.Clear();
+        Console.WriteLine("'1' - Pokreni igru \n" +
+                          "'2' - Izlaz");
+        startOrQuit = Console.ReadLine();
+
+        if (startOrQuit == "1" || startOrQuit == "2")
+            break;
+    }
+
+    switch (startOrQuit)
+    {
+        case "1":
+            StartGame();
+            break;
+        case "2":
+            Environment.Exit(0);
+            break;
+    }
+
 }
 
 
-var newHero = CreateNewHero(chosenHeroName); //Creating user's hero
-ShortTimeOutAndConsoleClear(); //Short pause and clearing of console
-
-newHero = CreateCustomHero(newHero); //Allowing the user to enter custom values for damage and health points
-ClickToContinueAndConsoleClear(); //Waiting for user to read the info
-
-PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
-ClickToContinueAndConsoleClear(); //Waiting for user to read the info
-
-
-switch (newHero.Category)
-{
-    case "Gladiator":       
-        GladiatorGame(newHero);     //If user chose the gladiator category, start the GladiatorGame function
-        break;
-    case "Enchanter":
-        EnchanterGame(newHero);     //If user chose the enchanter category, start the EnchanterGame function
-        break;
-    case "Marksman":
-        MarksmanGame(newHero);      //If user chose the marksman category, start the MarksmanGame function
-        break;
-}
 
 
 
 //Functions
+
+void StartGame()
+{
+    Console.Clear();
+    Console.WriteLine("Dobrodošli u Dungeon Quest! \n\n");
+
+    string chosenHeroName = null;
+    while (string.IsNullOrWhiteSpace(chosenHeroName))   //Ask the user to choose their hero's name until it's not blank
+    {
+        Console.Write("Odaberite ime svog heroja: ");
+        chosenHeroName = Console.ReadLine();
+    }
+
+
+    var newHero = CreateNewHero(chosenHeroName); //Creating user's hero
+    ShortTimeOutAndConsoleClear(); //Short pause and clearing of console
+
+    newHero = CreateCustomHero(newHero); //Allowing the user to enter custom values for damage and health points
+    ClickToContinueAndConsoleClear(); //Waiting for user to read the info
+
+    PrintHeroInformation(newHero); //Printing some basic information about user's chosen hero
+    ClickToContinueAndConsoleClear(); //Waiting for user to read the info
+
+
+    switch (newHero.Category)
+    {
+        case "Gladiator":
+            GladiatorGame(newHero);     //If user chose the gladiator category, start the GladiatorGame function
+            break;
+        case "Enchanter":
+            EnchanterGame(newHero);     //If user chose the enchanter category, start the EnchanterGame function
+            break;
+        case "Marksman":
+            MarksmanGame(newHero);      //If user chose the marksman category, start the MarksmanGame function
+            break;
+    }
+}
 
 bool SpecialPowerProbability(int probabilityPercentage)
 {
@@ -149,6 +182,7 @@ void MarksmanGame(Hero newHero)
         else    // If hero didn't manage to stay alive
         {
             Console.WriteLine("Izgubili ste! Više sreće drugi put :)");
+            ClickToContinueAndConsoleClear();
             break;  //Break the for loop
         }
         j++;
@@ -282,6 +316,7 @@ void EnchanterGame (Hero newHero)
         else    // If hero didn't manage to stay alive
         {
             Console.WriteLine("\n\nIzgubili ste! Više sreće drugi put :)\n\n");
+            ClickToContinueAndConsoleClear();
             break;  //Break the for loop
         }
         j++;
@@ -380,6 +415,7 @@ void GladiatorGame(Hero newHero)
         else    // If hero didn't manage to stay alive
         {
             Console.WriteLine("Izgubili ste! Više sreće drugi put :)");
+            ClickToContinueAndConsoleClear();
             break;  //Break the for loop
         }
         j++;
