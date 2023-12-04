@@ -64,10 +64,13 @@ namespace Game.Domain.Repositories
             {
                 case "Gladiator":
                     return (int)HeroHealthPoints.Gladiator;
+
                 case "Enchanter":
                     return (int)HeroHealthPoints.Enchanter;
+
                 case "Marksman":
                     return (int)HeroHealthPoints.Marksman;
+
                 default:
                     throw new InvalidOperationException("Nepostojeći heroj!");
             }
@@ -76,18 +79,22 @@ namespace Game.Domain.Repositories
 
         public void TradeExperienceForHealth()
         {
-            Console.WriteLine($"Ukoliko želite potrošiti {Experience} experience bodova kako bi vratili puni health, upišite 'da'. Ako ne želite, upišite bilo šta drugo: ");
+            Console.WriteLine($"Ukoliko želite potrošiti {Experience} experience bodova kako bi vratili puni health, upišite 'da'. \n" +
+                                $"Ako ne želite, upišite bilo šta drugo: ");
+
             var userAnswer = Console.ReadLine();
 
             if (userAnswer.ToLower() == "da" && Experience >= 2)
             {
                 HealthPoints = GetInitialHealthPoints();
                 Experience -= (int)Math.Round(Experience / 2.0);
-                Console.WriteLine($"\n Sada imate {HealthPoints} health bodova i {Experience} experience bodova. Sretno! \n");
 
+                Console.WriteLine($"\n Sada imate {HealthPoints} health bodova i {Experience} experience bodova. Sretno! \n");
             }
+
             else if (userAnswer.ToLower() == "da" && Experience < 2)
                 Console.WriteLine("Nažalost ne možete obnoviti health jer nemate dovoljno experience bodova! \n");
+
             else
                 Console.WriteLine($"Nastavljate s {HealthPoints} health bodova! Sretno! \n");
 

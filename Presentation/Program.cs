@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+
 //Main
 
 while (true)
@@ -68,9 +69,11 @@ void StartGame()
         case "Gladiator":
             GladiatorGame(newHero);     //If user chose the gladiator category, start the GladiatorGame function
             break;
+
         case "Enchanter":
             EnchanterGame(newHero);     //If user chose the enchanter category, start the EnchanterGame function
             break;
+
         case "Marksman":
             MarksmanGame(newHero);      //If user chose the marksman category, start the MarksmanGame function
             break;
@@ -81,6 +84,7 @@ bool SpecialPowerProbability(int probabilityPercentage)
 {
     var rnd = new Random();
     var randomNumber = rnd.Next(1, 101);
+
     if (randomNumber <= probabilityPercentage)
         return true;
     else
@@ -90,18 +94,22 @@ bool SpecialPowerProbability(int probabilityPercentage)
 void MarksmanGame(Hero newHero)
 {
     var listOfMonsters = new List<Monster>();
+
     for (int i = 0; i < 10; i++)
     {
         var newMonster = CreateNewMonster(); //Creating a new monster
         listOfMonsters.Add(newMonster);
     }
+
     var j = 1;
     var initialCriticalChance = 20; //Starting percentage for critical chance
     var initialStunChance = 10;     //Starting percentage for stun chance
+
     foreach (var newMonster in listOfMonsters)
     {
         var criticalChancePercentage = initialCriticalChance;
         var stunChancePercentage = initialStunChance;
+
         if (newHero.Level > 1)      //Percentages get increased with higher levels
         {
             criticalChancePercentage = initialCriticalChance + (newHero.Level * 10);
@@ -110,6 +118,7 @@ void MarksmanGame(Hero newHero)
 
         var roundNumber = 1;
         var receivedExperience = 0;
+
         PrintMonsterInformation(newMonster); //Printing some basic information about the monster
         ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
@@ -123,22 +132,26 @@ void MarksmanGame(Hero newHero)
             {
                 Console.WriteLine("\n" + roundNumber + ". runda \n");
                 var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
+
                 if (fightResult == true)    //  If user won the round
                 {
                     var isStunChance = SpecialPowerProbability(stunChancePercentage);
-                    var isCriticalChance = SpecialPowerProbability(criticalChancePercentage);   
+                    var isCriticalChance = SpecialPowerProbability(criticalChancePercentage); 
+                    
                     if(isStunChance)    //Check if user achieved stun chance, and if so, automatically kill the monster
                     {
                         Console.WriteLine($"\nPobjeda! ({newHero.Name} je iskoristio svoju supermoć (stun chance) i potpuno ošamutio protivnika! \n\n");
                         receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster 
                         newMonster.HealthPoints = 0;
                     }
+
                     else if (isCriticalChance)  //If stun chance wasn't achieved, check for critical chance. If that's achieved, monster will be hurt twice
                     {
                         Console.WriteLine($"\nPobjeda! ({newHero.Name} je iskoristio svoju supermoć (critical chance) i nanio dupli damage!) \n\n");
                         receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster 
                         newHero.NormalAttack(newMonster); //One more attack (double damage)
                     }
+                    
                     else
                     {
                         Console.WriteLine("\nPobjeda! \n\n");
@@ -146,14 +159,18 @@ void MarksmanGame(Hero newHero)
 
                     }
                 }
+
                 else if (fightResult == false)  //  If user lost the round
                 {
                     Console.WriteLine("\nPoraz! \n\n");
                     newMonster.NormalAttack(newHero);   //  Monster attacks the hero
                 }
+
                 else                             //  If the round was tied
                     Console.WriteLine("\nIzjednačeno! \n\n");   //  Just print that the result is a tie
+
             }
+
             //Printing information about the current state of user's and monster's health:
             Console.WriteLine("Vaš health: " + newHero.HealthPoints);
             Console.WriteLine("Čudovištev health: " + newMonster.HealthPoints);
@@ -161,6 +178,7 @@ void MarksmanGame(Hero newHero)
             roundNumber++;  //Incrementing the round number
             ClickToContinueAndConsoleClear();
         }
+
         if (IsHeroAlive(newHero))   //If hero managed to stay alive
         {
             Console.Clear();
@@ -187,6 +205,7 @@ void MarksmanGame(Hero newHero)
         }
         j++;
     }
+
     Console.Clear();
     Console.WriteLine("Čestitke!!! Porazili ste sva čudovišta!");
 }
@@ -209,6 +228,7 @@ int TradeManaForHealth(Hero newHero, int manaAmount)
 
         newHero.HealthPoints += (int)requestedAmount;
         manaAmount -= (int)requestedAmount;
+
         Console.WriteLine($"Sada imate {newHero.HealthPoints} health bodova i {manaAmount} mana bodova.\n");
         ClickToContinueAndConsoleClear();
     }
@@ -218,15 +238,18 @@ int TradeManaForHealth(Hero newHero, int manaAmount)
 void EnchanterGame (Hero newHero)
 {
     var listOfMonsters = new List<Monster>();
+
     for (int i = 0; i < 10; i++)
     {
         var newMonster = CreateNewMonster(); //Creating a new monster
         listOfMonsters.Add(newMonster);
     }
+
     var j = 1;
     var initialHealth = newHero.HealthPoints; //+ (1 + (newHero.Level*10) /100);   //Saving initial health points value (in case we need to return it after using extra life)
     var extraLife = 1;      //Number of extra lives that enchanter is allowed to use
     var initialMana = 30;   //Initial amount of Mana
+
     foreach (var newMonster in listOfMonsters)
     {
         var roundNumber = 1;
@@ -240,6 +263,7 @@ void EnchanterGame (Hero newHero)
         {
             if(manaAmount > 5)
                 manaAmount = TradeManaForHealth(newHero, manaAmount); // Checking if user wants to trade Mana for Health points
+
             else
                 Console.WriteLine("Potrebno vam je minimalno 6 mana bodova za zamjenu bodova! \n");
 
@@ -248,6 +272,7 @@ void EnchanterGame (Hero newHero)
                 Console.WriteLine($"Nemate dovoljno mane za napad! (imate {manaAmount}, a treba vam minimalno 5) \n" +
                                 "U ovoj rundi će vam se obnoviti mana, ali nećete imati pravo napada\n" +
                                 "pa čudovište automatski pobjeđuje ovu rundu.\n");
+
                 newMonster.NormalAttack(newHero);
                 manaAmount = initialMana * newHero.Level;
                 ClickToContinueAndConsoleClear();
@@ -261,16 +286,19 @@ void EnchanterGame (Hero newHero)
                 {
                     Console.WriteLine("\n" + roundNumber + ". runda \n");
                     var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
+
                     if (fightResult == true)    //  If user won the round
                     {
                         Console.WriteLine("\nPobjeda! \n\n");
                         receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster (only normal attack for now)
                     }
+
                     else if (fightResult == false)  //  If user lost the round
                     {
                         Console.WriteLine("\nPoraz! \n\n");
                         newMonster.NormalAttack(newHero);   //  Monster attacks the hero
                     }
+
                     else                             //  If the round was tied
                         Console.WriteLine("\nIzjednačeno! \n\n");   //  Just print that the result is a tie
                 }
@@ -339,16 +367,20 @@ void RageAttack(Hero newHero)
 void GladiatorGame(Hero newHero)
 {
     var listOfMonsters = new List<Monster>();
+
     for (int i = 0; i < 10; i++)
     {
         var newMonster = CreateNewMonster(); //Creating a new monster
         listOfMonsters.Add(newMonster);
     }
+
     var j = 1;
+
     foreach (var newMonster in listOfMonsters)
     {
         var roundNumber = 1;
         var receivedExperience = 0;
+
         PrintMonsterInformation(newMonster); //Printing some basic information about the monster
         ClickToContinueAndConsoleClear(); //Waiting for user to read the info
 
@@ -357,10 +389,13 @@ void GladiatorGame(Hero newHero)
             Console.Write("Ako želite kroz ovu borbu koristiti Rage napad, unesite 'da'. \n" +
                         "Ako ne želite, unesite bilo šta drugo.\n");
             var rageAttackQuestion = Console.ReadLine();
+
             var rememberDamage = newHero.Damage;
+
             if (rageAttackQuestion == "da")
             {
                 RageAttack(newHero);    //Use rage
+
                 Console.WriteLine($"Odabrali ste opciju Rage napad, tako da ćete sad imati: \n" +
                                 $" {newHero.Damage} damage bodova \n" +
                                 $" {newHero.HealthPoints} health bodova \n");
@@ -373,18 +408,22 @@ void GladiatorGame(Hero newHero)
             {
                 Console.WriteLine("\n" + roundNumber + ". runda \n");
                 var fightResult = RockPaperScissors(usersChosenAttack, monstersChosenAttack); //fight result is determined by RockPaperScissors function
+
                 if (fightResult == true)    //  If user won the round
                 {
                     Console.WriteLine("\nPobjeda! \n\n");
                     receivedExperience = newHero.NormalAttack(newMonster);  // hero attacks the monster (only normal attack for now)
                 }
+
                 else if (fightResult == false)  //  If user lost the round
                 {
                     Console.WriteLine("\nPoraz! \n\n");
                     newMonster.NormalAttack(newHero);   //  Monster attacks the hero
                 }
+
                 else                             //  If the round was tied
                     Console.WriteLine("\nIzjednačeno! \n\n");   //  Just print that the result is a tie
+
             }
             //Printing information about the current state of user's and monster's health:
             Console.WriteLine("Vaš health: " + newHero.HealthPoints);
@@ -431,6 +470,7 @@ static Hero CreateCustomHero(Hero newHero)
     var requestForCustomHero = Console.ReadLine();
 
     int? customHealth, customDamage;
+
     if (requestForCustomHero.ToLower() == "da")
     {
         Console.WriteLine();
@@ -476,6 +516,7 @@ static bool? RockPaperScissors(int usersChoice, int monstersChoice)
 {
     var UserAttackOption = (AttackOptions)usersChoice;
     var MonstersAttackOption = (AttackOptions)monstersChoice;
+
     Console.WriteLine("Vaš napad: " + UserAttackOption + "\n" + "Njegov napad: " + MonstersAttackOption);
     
     if (UserAttackOption == MonstersAttackOption)
@@ -487,20 +528,28 @@ static bool? RockPaperScissors(int usersChoice, int monstersChoice)
             case AttackOptions.Direct:
                 if (MonstersAttackOption == AttackOptions.Side)
                     return true;
+
                 else if (MonstersAttackOption == AttackOptions.Counter)
                     return false;
+
                 break;
+
             case AttackOptions.Side:
                 if (MonstersAttackOption == AttackOptions.Direct)
                     return false;
+
                 else if (MonstersAttackOption == AttackOptions.Counter)
                     return true;
+
                 break;
+
             case AttackOptions.Counter:
                 if (MonstersAttackOption == AttackOptions.Direct)
                     return true;
+
                 else if (MonstersAttackOption == AttackOptions.Side)
                     return false;
+
                 break;
         }
     }
@@ -537,10 +586,13 @@ static Monster CreateNewMonster()
 {
     var rnd = new Random();
     var randomNumber = rnd.Next(1, 101);
+
     if (randomNumber < 60)
         return new Goblin();
+
     else if (randomNumber < 85)
         return new Brute();
+
     else
         return new Witch();
 
@@ -570,6 +622,7 @@ static Hero CreateNewHero(string chosenHeroName)
 {
     int? chosenHeroCategory;
     Hero newHero = null;
+
     Console.WriteLine("\nOsnovne informacije o svakoj vrsti heroja: \n\n" +
                       "Gladiator -> Health: 100 - Damage: 10 - Rage napad \n" +
                       "Enchanter -> Health: 60 - Damage: 30 - Jedan extra život - Mana \n" +
@@ -588,10 +641,12 @@ static Hero CreateNewHero(string chosenHeroName)
                 Console.WriteLine("Odabrali ste Gladiatora!");
                 newHero = new Gladiator(chosenHeroName);
                 break;
+
             case 2:
                 Console.WriteLine("Odabrali ste Enchantera!");
                 newHero = new Enchanter(chosenHeroName);
                 break;
+
             case 3:
                 Console.WriteLine("Odabrali ste Marksmana!");
                 newHero = new Marksman(chosenHeroName);
